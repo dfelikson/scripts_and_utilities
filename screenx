@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# This utility connects to the last modified screen.
+
+screen=`ls -ltr /var/run/screen/S-denis | tail -1 | awk '{print $9}'`
+screen -x $screen
+

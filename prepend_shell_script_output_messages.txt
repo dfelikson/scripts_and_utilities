@@ -1,0 +1,10 @@
+When running one shell script from another, it may be useful
+to prepend the output messages written to the command window
+from the child script with something (e.g. the name of the 
+script that was called). To do so, tack on this pipe to the
+end of the command that calls the child script.
+
+| while read line; do echo "[INSERT TEXT HERE] $line"; done
+
+For example:
+sh some_script.sh | while read line; do echo "[some_script.sh] $line"; done

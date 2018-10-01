@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# This simple shell script finds the relative path from
+# $baseDir to $fullDir. For example, if:
+#
+#  baseDir=/base/dir
+#  fullDir=/base/dir/some/path/file.ext
+#
+# the script will return:
+#
+#  some/path/file.ext
+#
+ 
+baseDir=$1
+fullDir=$2
+
+# Build up the directory structure
+remain=$fullDir
+build=""
+while true; do
+   part=`echo $remain | rev | cut -d/ -f1 | rev`
+   remain=`echo $remain | sed "s/\/$part//g"`
+
+   if [ "$part" == `echo $baseDir | rev | cut -d/ -f1 | rev` ]; then
+      break
+   fi
+   
+   build=$part/$build
+done
+
+# Cleanup slashes
+build=${build%?}
+if [ "echo $build | cut -c1" == "/" ]; then
+   build=${build:0}
+fi
+
+echo $build
+

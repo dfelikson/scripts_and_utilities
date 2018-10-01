@@ -1,0 +1,21 @@
+Specific records from an input file may be selected, specified by line numbers
+contained in the first column of a "line_nums" file.
+
+For example:
+
+in:
+a
+b
+c
+
+line_nums:
+1
+3
+
+out:
+a
+c
+
+
+Using this awk command:
+awk 'FNR==NR{a[$1];next}(FNR in a){print}' line_nums in > out
