@@ -32,7 +32,7 @@ def readRasterBandAsArray(filename, bandnum):
 
    return rasterBandArray
 
-def writeArrayAsRasterBand(filename,geoTransform,array,noDataValue,metadataDict=None):
+def writeArrayAsRasterBand(filename,geoTransform,array,noDataValue,metadataDict=None,wktProj=None):
    cols = array.shape[1]
    rows = array.shape[0]
 
@@ -48,7 +48,10 @@ def writeArrayAsRasterBand(filename,geoTransform,array,noDataValue,metadataDict=
    outBand.WriteArray(arrayout)
    outBand.SetNoDataValue(noDataValue)
    outRasterSRS = osr.SpatialReference()
-   outRasterSRS.ImportFromEPSG(3413)
+   if wktProj:
+       outRasterSRS.ImportFromWkt(wktProj)
+   else:
+       outRasterSRS.ImportFromEPSG(3413)
    outRaster.SetProjection(outRasterSRS.ExportToWkt())
    outBand.FlushCache()
 
