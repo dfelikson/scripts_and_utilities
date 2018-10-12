@@ -21,10 +21,10 @@ z_var = args.z
 
 m = loadmat(matfile)
 
-x_upperleft = m[x_var][0][0]
-y_upperleft = m[y_var][0][0]
-x_step = m[x_var][0][1] - m[x_var][0][0]
-y_step = m[y_var][0][1] - m[y_var][0][0]
+x_upperleft = m[x_var][0,0]
+y_upperleft = m[y_var][0,0]
+x_step = m[x_var][1,0] - m[x_var][0,0]
+y_step = m[y_var][1,0] - m[y_var][0,0]
 
 gt = (x_upperleft, x_step, 0., y_upperleft, 0., y_step)
 raster.writeArrayAsRasterBand(matfile+'.tif', gt, m[z_var], -9999.)
