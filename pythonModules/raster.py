@@ -32,12 +32,17 @@ def readRasterBandAsArray(filename, bandnum):
 
    return rasterBandArray
 
-def writeArrayAsRasterBand(filename,geoTransform,array,noDataValue,metadataDict=None,wktProj=None):
+def writeArrayAsRasterBand(filename,geoTransform,array,noDataValue,metadataDict=None,wktProj=None,dataType='float'):
    cols = array.shape[1]
    rows = array.shape[0]
 
+   if dataType == 'float':
+      dt = gdal.GDT_Float32
+   elif dataType == 'int':
+      dt = gdal.GDT_Byte
+   
    driver = gdal.GetDriverByName('GTiff')
-   outRaster = driver.Create(filename, cols, rows, 1, gdal.GDT_Float32)
+   outRaster = driver.Create(filename, cols, rows, 1, dt)
    outRaster.SetGeoTransform(geoTransform)
    if metadataDict is not None:
       outRaster.SetMetadata( metadataDict )
