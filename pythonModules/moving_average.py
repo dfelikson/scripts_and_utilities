@@ -61,7 +61,7 @@ def moving_fit(x, y, window):
 #{{{
    ymvavg = np.array(np.nan * np.ones(y.shape))
 
-   for idx in xrange(0,len(y),1):
+   for idx in range(0,len(y),1):
       # Find elements within window
       if type(window).__module__ == np.__name__:
          if np.isnan(window[idx]):
