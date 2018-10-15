@@ -29,5 +29,5 @@ x_step = m[x_var][1,0] - m[x_var][0,0]
 y_step = m[y_var][1,0] - m[y_var][0,0]
 
 gt = (x_upperleft, x_step, 0., y_upperleft, 0., y_step)
-raster.writeArrayAsRasterBand(matfile+'.tif', gt, m[z_var], -9999., dataType=dt)
+raster.writeArrayAsRasterBand(matfile + '_' + z_var + '.tif', gt, m[z_var], -9999., dataType=dt)
 
