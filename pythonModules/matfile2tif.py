@@ -12,7 +12,7 @@ parser.add_argument('matfile',    type=str, help='matfile filename')
 parser.add_argument('-x',         type=str, help='name of variable with x coordinates', default='x')
 parser.add_argument('-y',         type=str, help='name of variable with y coordinates', default='y')
 parser.add_argument('-z',         type=str, help='name of variable with z coordinates', default='z')
-parser.add_argument('--datatype', type=str, help='data type of output tiff', default='float')
+parser.add_argument('--datatype', type=str, help='data type of output tiff', default='Float32')
 
 args = parser.parse_args()
 matfile = args.matfile
