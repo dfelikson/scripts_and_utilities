@@ -64,8 +64,8 @@ def HWHM(x, y, peakIdx, halfwindow):
 
 def runningMedian(x, y, xwindow, xcenterstart=None):
    sortIdx = np.argsort(x)
-   x = x[sortIdx]
-   y = y[sortIdx]
+   x = np.array(x)[sortIdx]
+   y = np.array(y)[sortIdx]
 
    medians  = np.array([])
    IQRs     = np.array([])
