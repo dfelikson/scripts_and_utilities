@@ -9,6 +9,8 @@ from matplotlib import cm, colors
 
 from bilinear_interpolate import *
 
+from scipy import ndimage as nd
+
 
 def map2pixel(mx, my, gt):
    px = ((mx - gt[0]) / gt[1]).astype(int)
@@ -148,4 +150,27 @@ def reprojectDataset ( dataset, pixel_spacing=5000., epsg_from=4326, epsg_to=277
                wgs84.ExportToWkt(), osng.ExportToWkt(), \
                gdal.GRA_Bilinear )
    return dest
+
+# From an answer on stackoverflow here: https://stackoverflow.com/questions/5551286/filling-gaps-in-a-numpy-array
+def fill(data, invalid=None):
+   """
+   Replace the value of invalid 'data' cells (indicated by 'invalid') 
+   by the value of the nearest valid data cell
+
+   Input:
+       data:    numpy array of any dimension
+       invalid: a binary array of same shape as 'data'. True cells set where data
+                value should be replaced.
+                If None (default), use: invalid  = np.isnan(data)
+
+   Output: 
+       Return a filled array. 
+   """
+   if invalid is None: invalid = np.isnan(data)
+   ind = nd.distance_transform_edt(invalid, return_distances=False, return_indices=True)
+   return data[tuple(ind)]
+
+def lookupNearest(x, y, z, xq, yq):
+   idx = np.nanargmin( np.abs(x-xq)**2 + np.abs(y-yq)**2 )
+   return z[idx]
 
