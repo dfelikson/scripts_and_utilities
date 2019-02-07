@@ -114,5 +114,5 @@ if __name__ == "__main__":
 
    (mx, my, data) = sampleRasterAtPoints(src_filename, shp_filename)
    for i in range(len(mx)):
-      print(mx[i], my[i], data[i])
+      print('{:f} {:f} {:f}'.format(mx[i], my[i], data[i]))
 
