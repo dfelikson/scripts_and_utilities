@@ -2,6 +2,9 @@
 import argparse
 from netCDF4 import Dataset
 
+import numpy as np
+from matplotlib import pyplot as plt
+
 parser = argparse.ArgumentParser()
 parser.add_argument('netCDFfile', type=str, help='netCDF file to open')
 
