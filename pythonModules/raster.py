@@ -11,6 +11,16 @@ from bilinear_interpolate import *
 
 from scipy import ndimage as nd
 
+def clipRaster(rasterArray, geoTransform, extent):
+   minX, maxX, minY, maxY = extent
+
+   ulX, ulY = map2pixel(minX, maxY, geoTransform)
+   lrX, lrY = map2pixel(maxX, minY, geoTransform)
+
+   rasterArray_clipped = rasterArray[ulY:lrY, ulX:lrX]
+   geoTransform_clipped = [ulX*geoTransform[1]+geoTransform[0], geoTransform[1], geoTransform[2], ulY*geoTransform[5]+geoTransform[3], geoTransform[4], geoTransform[5]]
+
+   return rasterArray_clipped, geoTransform_clipped
 
 def map2pixel(mx, my, gt):
    px = ((mx - gt[0]) / gt[1]).astype(int)
@@ -23,18 +33,21 @@ def getCoordinates(filename, bandnum):
 
    return coordinates
 
-def readRasterBandAsArray(filename, bandnum):
+def readRasterBandAsArray(filename, bandnum, rasterBandNoDataValue=None, clip_extent=None):
    raster = gdal.Open(filename, gdalconst.GA_ReadOnly)
    rasterBand = raster.GetRasterBand(bandnum)
    rasterBandArray = rasterBand.ReadAsArray(0, 0, raster.RasterXSize, raster.RasterYSize).astype(numpy.float)
    
-   rasterBandNoDataValue = rasterBand.GetNoDataValue()
-   if rasterBandNoDataValue is not None:
-      rasterBandArray[rasterBandArray - rasterBandNoDataValue < np.finfo(float).eps] = numpy.nan
+   if rasterBandNoDataValue is None:
+      rasterBandNoDataValue = rasterBand.GetNoDataValue()
+      if rasterBandNoDataValue is not None:
+         rasterBandArray[rasterBandArray - rasterBandNoDataValue < np.finfo(float).eps] = numpy.nan
+   else:
+      rasterBandArray[rasterBandArray==rasterBandNoDataValue] = numpy.nan
 
    return rasterBandArray
 
-def writeArrayAsRasterBand(filename,geoTransform,array,noDataValue,metadataDict=None,wktProj=None,dataType='Float32'):
+def writeArrayAsRasterBand(filename,geoTransform,array,noDataValue,metadataDict=None,wktProj=None,epsg=None,dataType='Float32'):
    cols = array.shape[1]
    rows = array.shape[0]
 
@@ -54,6 +67,8 @@ def writeArrayAsRasterBand(filename,geoTransform,array,noDataValue,metadataDict=
    outRasterSRS = osr.SpatialReference()
    if wktProj:
        outRasterSRS.ImportFromWkt(wktProj)
+   elif epsg:
+       outRasterSRS.ImportFromEPSG(epsg)
    else:
        outRasterSRS.ImportFromEPSG(3413)
    outRaster.SetProjection(outRasterSRS.ExportToWkt())
@@ -75,6 +90,22 @@ def sampleRasterAtPoint(rasterArray,geoTransform,x,y,method='bilinear',nodataVal
          z = np.nan
 
    return z
+
+def extent2gt(rasterArray, extent):
+   left, right, bottom, top = extent
+   height, width = rasterArray.shape
+   xstep = (right-left) / width
+   ystep = (bottom-top) / height
+
+   geoTransform = (left, xstep, 0, top, 0, ystep)
+   return geoTransform
+
+def gt2extent(rasterArray, geoTransform):
+   left   = geoTransform[0]
+   right  = geoTransform[0] + rasterArray.shape[1] * geoTransform[1]
+   top    = geoTransform[3]
+   bottom = geoTransform[3] + rasterArray.shape[0] * geoTransform[5]
+   return left, right, bottom, top
 
 def plotRaster(rasterArray,zMin,zMax,plotFilename):
    fig, ax = plt.subplots()
