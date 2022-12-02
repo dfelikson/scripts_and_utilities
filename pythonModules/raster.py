@@ -41,7 +41,7 @@ def readRasterBandAsArray(filename, bandnum, rasterBandNoDataValue=None, clip_ex
    if rasterBandNoDataValue is None:
       rasterBandNoDataValue = rasterBand.GetNoDataValue()
       if rasterBandNoDataValue is not None:
-         rasterBandArray[rasterBandArray - rasterBandNoDataValue < np.finfo(float).eps] = numpy.nan
+         rasterBandArray[np.abs(rasterBandArray - rasterBandNoDataValue) < np.finfo(float).eps] = numpy.nan
    else:
       rasterBandArray[rasterBandArray==rasterBandNoDataValue] = numpy.nan
 
